@@ -74,6 +74,9 @@ class ScrollableScreen(Screen):
         self.fontHeight = fontSize
         self.highlightedIndex = 0
         self.visible_items = self.frameSize[1] // self.fontHeight
+        self.borderThickness = 2
+        self.borderShift = 3
+        self.scrollThickness = 3
 
     def _draw(self):
         image = Image.new('RGB', self.frameSize, 'black')
@@ -87,8 +90,8 @@ class ScrollableScreen(Screen):
 
             if idx + self.listOffset == self.highlightedIndex:
 
-                draw.rectangle([(10, y_position + 3), (self.frameSize[0] - 10, y_position + self.fontHeight + 3)], fill='white')
-                draw.text((10, y_position), string, fill='black', font=font)
+                draw.rectangle([(10 - self.borderThickness, y_position + self.borderShift - self.borderThickness), (self.frameSize[0] - 10 + self.borderThickness, y_position + self.fontHeight + self.borderShift + self.borderThickness)], fill='white')
+                draw.text((10, y_position), string, fill='white', font=font)
             else:
                 draw.text((10, y_position), string, fill='white', font=font)
             y_position += self.fontHeight
@@ -98,8 +101,8 @@ class ScrollableScreen(Screen):
             scrollbar_total_height = visible_height
             scrollbar_visible_height = visible_height * visible_height / total_height
             scrollbar_position = (self.listOffset * self.fontHeight * scrollbar_total_height) / total_height
-            draw.rectangle([(self.frameSize[0] - 3, 0), (self.frameSize[0], scrollbar_total_height)], outline='white')
-            draw.rectangle([(self.frameSize[0] - 3, scrollbar_position), (self.frameSize[0], scrollbar_position + scrollbar_visible_height)], fill='white')
+            draw.rectangle([(self.frameSize[0] - self.scrollThickness, 0), (self.frameSize[0], scrollbar_total_height)], outline='white')
+            draw.rectangle([(self.frameSize[0] - self.scrollThickness, scrollbar_position), (self.frameSize[0], scrollbar_position + scrollbar_visible_height)], fill='white')
 
             self._updateImage(image)
 
@@ -127,7 +130,55 @@ class ScrollableScreen(Screen):
 
         self.closeScreen()
 
+class HomeScreen(Screen):
+    def __init__(self):
+        super().__init__()
 
+class PageScreen(Screen):
+    def __init__(self):
+        super().__init__()
+
+class ClockScreen(Screen):
+    def __init__(self):
+        super().__init__()
+
+class FileExploreScreen(Screen):
+    def __init__(self, root, fontSize=12):
+        super().__init__()
+        self.directory = root
+        self.fontHeight = fontSize
+        self.items = []
+
+    def _draw(self):
+        image = Image.new('RGB', self.frameSize, 'black')
+        font = ImageFont.truetype("freefont-ttf/sfd/FreeMonoBold.ttf", self.fontHeight)
+        draw = ImageDraw.Draw(image)
+
+        
+
+        self._updateImage(image)
+
+    def _updateItems(self, directoryOnly=False, selectDirectory=False):
+        items = []
+
+    def prompt(self, directoryOnly=False, selectDirectory=False):
+        self._updateItems()
+        self._draw()
+        while True:
+            k = cv2.waitKeyEx(1)
+            if k == 27:
+                break
+        self.closeScreen()
+
+class KeyboardScreen(Screen):
+    def __init__(self):
+        super().__init__()
+
+class PromptScreen(Screen):
+    def __init__(self):
+        super().__init__()
+
+# Test Below
 if __name__ == "__main__":
     screen = Screen()
     screen.test()
@@ -135,3 +186,4 @@ if __name__ == "__main__":
     menu = ScrollableScreen(items)
     selection = menu.displayStringList()
     print(items[selection])
+    file_select = FileExploreScreen("C:\\")
